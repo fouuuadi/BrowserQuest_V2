@@ -74,6 +74,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                 };
 
                 this.connection.onmessage = function(e) {
+                    console.log("Received message from server:", e.data)
                     if(e.data === "go") {
                         if(self.connected_callback) {
                             self.connected_callback();
