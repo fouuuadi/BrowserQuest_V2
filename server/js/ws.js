@@ -2,130 +2,189 @@ const WebSocket = require('ws');
 const http = require('http');
 const url = require('url');
 const Utils = require('./utils');
-const _ = require('underscore');
+const BISON = require('bison');
 
-let connectionCounter = 0;
+let useBison = false;
+let WS = {};
 
-class Connection {
-    constructor(id, socket, server) {
-        this.id = id;
-        this._socket = socket;
-        this._server = server;
-        this._listenCallback = null;
-        this._closeCallback = null;
-
-        this._socket.on('message', (data) => {
-            if (this._listenCallback) {
-                try {
-                    const message = JSON.parse(data);
-                    this._listenCallback(message);
-                } catch (e) {
-                    console.error("Invalid JSON:", e);
-                    this.close("Invalid JSON");
-                }
-            }
-        });
-
-        this._socket.on('close', () => {
-            if (this._closeCallback) {
-                this._closeCallback();
-            }
-            this._server.removeConnection(this.id);
-        });
-    }
-
-    listen(callback) {
-        this._listenCallback = callback;
-    }
-
-    onClose(callback) {
-        this._closeCallback = callback;
-    }
-
-    send(message) {
-        const data = JSON.stringify(message);
-        if (this._socket.readyState === WebSocket.OPEN) {
-            this._socket.send(data);
-        }
-    }
-
-    close(reason) {
-        console.log(`Closing connection ${this.id}. Reason: ${reason}`);
-        this._socket.close();
-    }
-}
-
-class WebSocketServerWrapper {
+// Classe de base Server
+class Server {
     constructor(port) {
         this.port = port;
         this._connections = {};
-        this._connectionCallback = null;
-        this._errorCallback = null;
-        this._statusCallback = null;
-
-        this._httpServer = http.createServer((req, res) => {
-            const path = url.parse(req.url).pathname;
-            if (path === '/status' && this._statusCallback) {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(this._statusCallback());
-            } else {
-                res.writeHead(404);
-                res.end();
-            }
-        });
-
-        this._wsServer = new WebSocket.Server({ server: this._httpServer });
-
-        this._wsServer.on('connection', (socket, req) => {
-            const id = this._createId();
-            const connection = new Connection(id, socket, this);
-            this._connections[id] = connection;
-
-            if (this._connectionCallback) {
-                this._connectionCallback(connection);
-            }
-        });
-
-        this._httpServer.listen(port, () => {
-            console.log(`WebSocket server is listening on port ${port}`);
-        });
-
-        this._wsServer.on('error', (err) => {
-            if (this._errorCallback) {
-                this._errorCallback(err);
-            } else {
-                console.error("WebSocket server error:", err);
-            }
-        });
+        this._counter = 0;
     }
 
     onConnect(callback) {
-        this._connectionCallback = callback;
+        this.connection_callback = callback;
     }
 
     onError(callback) {
-        this._errorCallback = callback;
-    }
-
-    onRequestStatus(callback) {
-        this._statusCallback = callback;
-    }
-
-    _createId() {
-        return 'ws_' + Utils.random(99) + '_' + (connectionCounter++);
+        this.error_callback = callback;
     }
 
     broadcast(message) {
-        for (let id in this._connections) {
-            this._connections[id].send(message);
-        }
+        // Diffuse le message à toutes les connexions
+        Object.values(this._connections).forEach(connection => connection.send(message));
+    }
+
+    forEachConnection(callback) {
+        Object.values(this._connections).forEach(callback);
+    }
+
+    addConnection(connection) {
+        this._connections[connection.id] = connection;
     }
 
     removeConnection(id) {
         delete this._connections[id];
     }
+
+    getConnection(id) {
+        return this._connections[id];
+    }
 }
 
-module.exports = {
-    MultiVersionWebsocketServer: WebSocketServerWrapper
-};
+// Classe Connection
+class Connection {
+    constructor(id, connection, server) {
+        this._connection = connection;
+        this._server = server;
+        this.id = id;
+    }
+
+    onClose(callback) {
+        this.close_callback = callback;
+    }
+
+    listen(callback) {
+        this.listen_callback = callback;
+    }
+
+    send(message) {
+        // Envoie un message au client
+        let data;
+        if (useBison) {
+            data = BISON.encode(message);
+        } else {
+            data = JSON.stringify(message);
+        }
+        this.sendUTF8(data);
+    }
+
+    sendUTF8(data) {
+        this._connection.send(data);
+    }
+
+    close(logError) {
+        console.log(`Closing connection to ${this._connection.remoteAddress}. Error: ${logError}`);
+        this._connection.close();
+    }
+}
+
+// Serveur WebSocket utilisant `ws`
+class WebSocketServer extends Server {
+    constructor(port) {
+        super(port);
+        const self = this;
+
+        // Crée un serveur HTTP pour gérer les connexions WebSocket
+        this._httpServer = http.createServer((request, response) => {
+            const path = url.parse(request.url).pathname;
+            switch (path) {
+                case '/status':
+                    if (self.status_callback) {
+                        response.writeHead(200);
+                        response.write(self.status_callback());
+                    }
+                    break;
+                default:
+                    response.writeHead(404);
+            }
+            response.end();
+        });
+
+        // Démarre le serveur HTTP
+        this._httpServer.listen(port, () => {
+            console.log(`Server is listening on port ${port}`);
+        });
+
+        // Crée un serveur WebSocket
+        this._wsServer = new WebSocket.Server({ server: this._httpServer });
+
+        // Gère les nouvelles connexions WebSocket
+        this._wsServer.on('connection', (ws) => {
+            const connectionId = self._createId();
+            const connection = new WebSocketConnection(connectionId, ws, self);
+
+            // Appelle le callback de connexion
+            if (self.connection_callback) {
+                self.connection_callback(connection);
+            }
+            self.addConnection(connection);
+        });
+    }
+
+    _createId() {
+        return '5' + Utils.random(99) + '' + (this._counter++);
+    }
+
+    broadcast(message) {
+        // Diffuse un message à toutes les connexions WebSocket
+        this.forEachConnection((connection) => connection.send(message));
+    }
+
+    onRequestStatus(status_callback) {
+        this.status_callback = status_callback;
+    }
+}
+
+// Classe Connection spécifique pour `ws`
+class WebSocketConnection extends Connection {
+    constructor(id, connection, server) {
+        super(id, connection, server);
+
+        // Écoute les messages entrants
+        this._connection.on('message', (message) => {
+            if (this.listen_callback) {
+                try {
+                    const parsedMessage = useBison ? BISON.decode(message) : JSON.parse(message);
+                    this.listen_callback(parsedMessage);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        this.close("Received message was not valid JSON.");
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+        });
+
+        // Écoute la fermeture de la connexion
+        this._connection.on('close', () => {
+            if (this.close_callback) {
+                this.close_callback();
+            }
+            this._server.removeConnection(this.id);
+        });
+    }
+
+    send(message) {
+        let data;
+        if (useBison) {
+            data = BISON.encode(message);
+        } else {
+            data = JSON.stringify(message);
+        }
+        this.sendUTF8(data);
+    }
+
+    sendUTF8(data) {
+        this._connection.send(data);
+    }
+}
+
+WS.WebSocketServer = WebSocketServer;
+WS.WebSocketConnection = WebSocketConnection;
+
+module.exports = WS;
