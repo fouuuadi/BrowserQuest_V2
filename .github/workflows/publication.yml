@@ -34,7 +34,7 @@ jobs:
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Front/Dockerfile
+          context: ./Front
+          file: Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquest-frontend:latest
