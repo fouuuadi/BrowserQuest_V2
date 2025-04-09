@@ -37,4 +37,4 @@ jobs:
           context: ./client
           file: ./client/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/browserquest-frontend:latest
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquest-frontend:latest
