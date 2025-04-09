@@ -315,4 +315,3 @@ Types.getMessageTypeAsString = function(type) {
 if(!(typeof exports === 'undefined')) {
     module.exports = Types;
 }
-console.log("hello");
