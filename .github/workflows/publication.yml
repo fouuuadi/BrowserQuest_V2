@@ -29,7 +29,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestV2-backend:latest
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestv2-backend:latest
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
@@ -37,4 +37,4 @@ jobs:
           context: .
           file: ./client/Dockerfile
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestV2-frontend:latest
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestv2-frontend:latest
