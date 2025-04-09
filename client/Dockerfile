@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN npm install -g http-server
 
-COPY . .
+COPY ./client/ .
 
 COPY ../shared ./shared
 
