@@ -4,10 +4,10 @@ WORKDIR /app
 
 RUN npm install -g http-server
 
-COPY client/ .
+COPY ./client .
 
-COPY shared/ ./shared
+COPY ./shared ./shared
 
 EXPOSE 3000
 
-CMD ["http-server", ".", "-p", "3000"]
+CMD ["http-server", "./client", "-p", "3000"]
