@@ -35,6 +35,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./client/Dockerfile
+          file: ./Front/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquest-frontend:latest
