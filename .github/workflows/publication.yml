@@ -43,6 +43,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./nginx.Dockerfile
+          file: ./nginx.DOCKERFILE 
+          # Fouad j'ai mis en majuscule car je l'avais push en majuscule et ici en minuscule mais après les modifs ça n'a pas changé
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestv3-nginx:latest
