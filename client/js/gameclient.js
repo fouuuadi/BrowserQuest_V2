@@ -45,7 +45,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         },
         
         connect: function(dispatcherMode) {
-            var url = "ws://"+ this.host +":"+ this.port +"/api/",
+            var url = "ws://"+ this.host +":"+ this.port +"/api/", //fouad c'était ici le problème, après avoir configurer les port, on devait envoyer toutes requestes /api/
                 self = this;
             
             log.info("Trying to connect to server : "+url);
