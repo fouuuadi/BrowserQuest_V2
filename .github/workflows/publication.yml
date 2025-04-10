@@ -3,7 +3,7 @@ name: Build and Push Docker Images
 on:
   push:
     branches:
-      - main
+      - modestin
 
 # test
 jobs:
@@ -38,3 +38,11 @@ jobs:
           file: ./client/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestv3-frontend:latest
+
+      - name: Build and push nginx (load balancer) image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./nginx.Dockerfile
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/browserquestv3-nginx:latest

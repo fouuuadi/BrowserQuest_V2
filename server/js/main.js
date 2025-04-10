@@ -111,24 +111,14 @@ function getConfigFile(path, callback) {
     });
 }
 
-var defaultConfigPath = './server/config.json',
-    customConfigPath = './server/config_local.json';
+var configPaths = ['./server/config1.json', './server/config2.json', './server/config3.json'];
 
-process.argv.forEach(function (val, index, array) {
-    if (index === 2) {
-        customConfigPath = val;
-    }
-});
-
-getConfigFile(defaultConfigPath, function (defaultConfig) {
-    getConfigFile(customConfigPath, function (localConfig) {
-        if (localConfig) {
-            main(localConfig);
-        } else if (defaultConfig) {
-            main(defaultConfig);
+configPaths.forEach(function (configPath) {
+    getConfigFile(configPath, function (config) {
+        if (config) {
+            main(config);
         } else {
-            console.error("Server cannot start without any configuration file.");
-            process.exit(1);
+            console.error(`Failed to load configuration from ${configPath}`);
         }
     });
 });

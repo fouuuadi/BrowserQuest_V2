@@ -1,13 +1,62 @@
 services:
-  backend:
+  nginx:
+    image: nginx:latest
+    container_name: browserquest-nginx
+    ports:
+      - "8084:80" 
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro 
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+      - frontend
+    command: /bin/sh -c "sleep 5 && nginx -g 'daemon off;'"
+    networks:
+      - browserquest-network
+    restart: unless-stopped
+
+  backend1:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: browserquest-backend
+    container_name: browserquest-backend1
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
       - ./shared:/app/shared
+    environment:
+      - CONFIG_PATH=./server/config1.json
+    networks:
+      - browserquest-network
+    restart: unless-stopped
+
+  backend2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: browserquest-backend2
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./shared:/app/shared
+    environment:
+      - CONFIG_PATH=./server/config2.json
+    networks:
+      - browserquest-network
+    restart: unless-stopped
+
+  backend3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: browserquest-backend3
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./shared:/app/shared
+    environment:
+      - CONFIG_PATH=./server/config3.json
     networks:
       - browserquest-network
     restart: unless-stopped
@@ -19,10 +68,6 @@ services:
     container_name: browserquest-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./shared:/app/shared
-    depends_on:
-      - backend
     networks:
       - browserquest-network
     restart: unless-stopped
