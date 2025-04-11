@@ -111,7 +111,7 @@ function getConfigFile(path, callback) {
     });
 }
 
-var configPaths = ['./server/config1.json', './server/config2.json', './server/config3.json'];
+var configPaths = ['./server/config1.json'];
 
 configPaths.forEach(function (configPath) {
     getConfigFile(configPath, function (config) {

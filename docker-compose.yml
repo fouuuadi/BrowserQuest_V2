@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend1
     ports:
-      - "8001:8001"
+      - "8001:8000"
     volumes:
       - ./shared:/app/shared
     environment:
@@ -37,11 +37,11 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend2
     ports:
-      - "8002:8002"
+      - "8002:8000"
     volumes:
       - ./shared:/app/shared
     environment:
-      - CONFIG_PATH=./server/config2.json
+      - CONFIG_PATH=./server/config1.json
     networks:
       - browserquest-network
     restart: unless-stopped
@@ -52,11 +52,11 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend3
     ports:
-      - "8003:8003"
+      - "8003:8000"
     volumes:
       - ./shared:/app/shared
     environment:
-      - CONFIG_PATH=./server/config3.json
+      - CONFIG_PATH=./server/config1.json
     networks:
       - browserquest-network
     restart: unless-stopped
