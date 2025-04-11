@@ -97,13 +97,13 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                     log.debug("Connection closed");
                     $('#container').addClass('error');
                     
-                    if(self.disconnected_callback) {
-                        if(self.isTimeout) {
-                            self.disconnected_callback("You have been disconnected for being inactive for too long");
-                        } else {
-                            self.disconnected_callback("The connection to BrowserQuest has been lost");
-                        }
-                    }
+                    // if(self.disconnected_callback) {
+                    //     if(self.isTimeout) {
+                    //         self.disconnected_callback("You have been disconnected for being inactive for too long");
+                    //     } else {
+                    //         self.disconnected_callback("The connection to BrowserQuest has been lost");
+                    //     }
+                    // }
                 };
             }
         },

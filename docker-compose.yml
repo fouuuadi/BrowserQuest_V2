@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend1
     ports:
-      - "8001:8000"
+      - "8001:8001"
     volumes:
       - ./shared:/app/shared
     environment:
@@ -37,7 +37,7 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend2
     ports:
-      - "8002:8000"
+      - "8002:8001"
     volumes:
       - ./shared:/app/shared
     environment:
@@ -52,7 +52,7 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-backend3
     ports:
-      - "8003:8000"
+      - "8003:8001"
     volumes:
       - ./shared:/app/shared
     environment:
