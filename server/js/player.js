@@ -27,7 +27,7 @@ module.exports = Player = Character.extend({
         this.connection.listen(function(message) {
             var action = parseInt(message[0]);
             
-            log.debug("Received: "+message);
+            console.debug("Received: "+message);
             if(!check(message)) {
                 self.connection.close("Invalid "+Types.getMessageTypeAsString(action)+" message format: "+message);
                 return;
@@ -61,7 +61,8 @@ module.exports = Player = Character.extend({
                 
                 self.server.addPlayer(self);
                 self.server.enter_callback(self);
-
+                console.log("🛰️ Reçu message du client:", message);
+                console.log("🛰️ Nom du joueur:", self.name);
                 self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
                 self.hasEnteredGame = true;
                 self.isDead = false;
@@ -261,6 +262,7 @@ module.exports = Player = Character.extend({
     },
     
     send: function(message) {
+        console.log("📤 .send() vers le client:", message);
         this.connection.send(message);
     },
     
@@ -344,7 +346,7 @@ module.exports = Player = Character.extend({
     
     equipItem: function(item) {
         if(item) {
-            log.debug(this.name + " equips " + Types.getKindAsString(item.kind));
+            console.debug(this.name + " equips " + Types.getKindAsString(item.kind));
             
             if(Types.isArmor(item.kind)) {
                 this.equipArmor(item.kind);

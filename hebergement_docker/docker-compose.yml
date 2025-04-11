@@ -1,0 +1,54 @@
+services:
+  nginx:
+    image: modestin/browserquestv3-nginx:latest  
+    container_name: browserquest-nginx
+    platform: "linux/amd64"  # <-- ajouter ceci
+    ports:
+      - "8084:80"
+    restart: unless-stopped
+    networks:
+      - browserquest-network
+
+  backend1:
+    image: modestin/browserquestv3-backend:latest  
+    container_name: browserquest-backend1
+    platform: "linux/amd64"  # <-- ajouter ceci
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    networks:
+      - browserquest-network
+
+  backend2:
+    image: modestin/browserquestv3-backend:latest  
+    container_name: browserquest-backend2
+    platform: "linux/amd64"
+    ports:
+      - "8002:8001"
+    restart: unless-stopped
+    networks:
+      - browserquest-network
+
+  backend3:
+    image: modestin/browserquestv3-backend:latest  
+    container_name: browserquest-backend3
+    platform: "linux/amd64"
+    ports:
+      - "8003:8001"
+    restart: unless-stopped
+    networks:
+      - browserquest-network
+
+  frontend:
+    image: modestin/browserquestv3-frontend:latest  
+    container_name: browserquest-frontend
+    platform: "linux/amd64"
+    ports:
+      - "3000:3000" # <-- Faire attention que le port ne soit pas utiliser
+    restart: unless-stopped
+    networks:
+      - browserquest-network
+
+networks:
+  browserquest-network:
+    driver: bridge

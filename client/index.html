@@ -18,7 +18,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 	<head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
-        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
         <link rel="icon" type="image/png" href="img/common/favicon.png">
         <meta property="og:title" content="BrowserQuest">
@@ -28,6 +28,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <meta property="og:site_name" content="BrowserQuest">
         <meta property="og:description" content="Play Mozilla's BrowserQuest, an HTML5 massively multiplayer game demo powered by WebSockets!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
+        <link rel="stylesheet" href="css/security.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
         <script src="js/lib/modernizr.js" type="text/javascript"></script>
         <!--[if lt IE 9]>
@@ -44,6 +45,18 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 	<body class="intro upscaled">
     <![endif]-->
 	<body class="intro">
+        <!-- la sécurité toute basique, simple -->
+        <div id="security-screen">
+            <div id="security-overlay">
+                <input type="text" class="square" maxlength="1">
+                <input type="text" class="square" maxlength="1">
+                <input type="text" class="square" maxlength="1">
+                <input type="text" class="square" maxlength="1">
+            </div>
+            <div id="security-input">
+                <button id="submit-code">Submit</button>
+            </div>
+        </div>
 	    <noscript>
 	       <div class="alert">
 	           You need to enable JavaScript to play BrowserQuest.
@@ -354,5 +367,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                 var require = { waitSeconds: 60 };
         </script>
         <script data-main="js/home" src="js/lib/require-jquery.js"></script>
+        <script data-main="js/home" src="js/security.js"></script>
 	</body>
 </html>
