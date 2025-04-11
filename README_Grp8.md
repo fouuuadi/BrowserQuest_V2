@@ -1,4 +1,22 @@
 
+# BrowserQuest
+
+**BrowserQuest** est une expérimentation de jeu multijoueur en HTML5/JavaScript.
+
+## 🚀 Lancement rapide via Docker
+
+Ce projet fonctionne avec des images Docker.  
+Assure-toi d'avoir **Docker** et **Docker Compose** installés et lancés avant de commencer.
+
+### Étapes à suivre :
+
+1. Cloner le dépôt :
+
+- git clone https://github.com/fouuuadi/BrowserQuest_V2.git
+- cd BrowserQuest_V2
+- Lancer les container : docker-compose up ou 
+- cd ./hebergement_docker : docker-compose up
+
 ## Étape 1 : Déploiement Docker
 
 - Création des images *front* et *back*, ainsi que d’une image *Nginx* pour gérer le load balancing et le failover.  
