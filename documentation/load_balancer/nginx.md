@@ -8,6 +8,7 @@
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 1. **Installation de Nginx**
+    ```bash
     brew install nginx
 2. **Édition du fichier de configuration Nginx**
     nano /opt/homebrew/etc/nginx/nginx.conf 
