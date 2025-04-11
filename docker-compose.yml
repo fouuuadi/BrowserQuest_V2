@@ -67,7 +67,7 @@ services:
       dockerfile: Dockerfile
     container_name: browserquest-frontend
     ports:
-      - "3000:3000"
+      - "3009:3000"
     networks:
       - browserquest-network
     restart: unless-stopped
